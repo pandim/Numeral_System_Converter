@@ -1,0 +1,124 @@
+package converter;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+//------01----------
+        //        int a = 12;
+//        System.out.println(a + " = 0b" + Integer.toBinaryString(a));
+//------02----------
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println(scanner.nextInt() % 8);
+//------03----------
+//        Scanner scanner = new Scanner(System.in);
+//        int num = scanner.nextInt();
+//        int radix = scanner.nextInt();
+//        String s;
+//        switch (radix) {
+//            case 2:
+//                s = "0b";
+//                break;
+//            case 8:
+//                s = "0";
+//                break;
+//            case 16:
+//                s = "0x";
+//                break;
+//            default:
+//                s = "Wrong !!!  ";
+//        }
+//        System.out.println(s + Long.toString(num, radix));
+//------04----------
+//        Scanner scanner = new Scanner(System.in);
+//        int sourceRadix = scanner.nextInt();
+//        int number = sourceRadix == 1 ? scanner.next().length() : Integer.parseInt(scanner.next(), sourceRadix);
+//        int targetRadix = scanner.nextInt();
+//        if (targetRadix < 1 || targetRadix > 36) {
+//            System.out.println("error");
+//        } else if (targetRadix == 1) {
+//            for (int i = 0; i < number; i++) {
+//                System.out.print("1");
+//            }
+//            System.out.println();
+//        } else {
+//            System.out.println(Integer.toString(number, targetRadix));
+//        }
+//------05----------
+        Scanner scanner = new Scanner(System.in);
+
+//        String input = "+12343454556";
+//        boolean result = input.matches("(\\+*)\\d{11}");
+//        if(result == true){
+        boolean errorFlag = false;
+        String inputS;
+        int inputI;
+        int sourceRadix = 0;
+        int targetRadix = 0;
+        String[] sourceNumber = new String[2];
+
+        if ((inputS = scanner.next()).matches("\\d+") && (inputI = Integer.parseInt(inputS)) > 0 && inputI <= 36) {
+            sourceRadix = inputI;
+            char maxChar = Character.forDigit(sourceRadix - 1, sourceRadix);
+            inputS = scanner.next().toLowerCase();
+            if (sourceRadix == 1 && inputS.matches("1+") ||
+                    sourceRadix <= 10 && inputS.matches("[0-" + maxChar + ".]+") ||
+                    sourceRadix > 10 && inputS.matches("[0-9a-" + maxChar + ".]+")) {
+                sourceNumber = inputS.split("\\.");
+                inputS = scanner.next();
+                boolean t = inputS.matches("\\d+");
+                if (t && (inputI = Integer.parseInt(inputS)) > 0 && inputI <= 36) {
+                    targetRadix = inputI;
+                } else {
+                    errorFlag = true;
+                }
+
+            } else {
+                errorFlag = true;
+            }
+
+        } else {
+            errorFlag = true;
+        }
+
+
+//        string.matches("[0-9a-" + i +"]+")
+//if ((inputS = scanner.next().toLowerCase().matches()))
+
+
+//        Очень полезно для изменений a = 10, b = 11 ...
+//        Character.getNumericValue ()
+//        и наоборот 10 = a, 11 = b ...
+//        Character.forDigit (Value, radix)
+        if (!errorFlag) {
+            int integerPart = sourceRadix == 1 ? sourceNumber[0].length() : Integer.parseInt(sourceNumber[0], sourceRadix);
+            if (targetRadix == 1) {
+                for (int i = 0; i < integerPart; i++) {
+                    System.out.print("1");
+                }
+                System.out.println();
+            } else {
+                System.out.print(Integer.toString(integerPart, targetRadix));
+//                System.out.println(sourceNumber.length);
+                if (sourceNumber.length == 2) {
+                    char[] fractionalPartChars = sourceNumber[1].toCharArray();
+                    double fractionalPart = 0;
+
+                    for (int i = 0; i < fractionalPartChars.length; i++) {
+                        fractionalPart += Character.getNumericValue(fractionalPartChars[i]) / Math.pow(sourceRadix, i + 1);
+                    }
+                    StringBuilder fractionalPartOut = new StringBuilder();
+                    for (int i = 0; i < 5; i++) {
+                        fractionalPart *= targetRadix;
+                        fractionalPartOut.append(Character.forDigit((int) fractionalPart, targetRadix));
+                        fractionalPart -= (int) fractionalPart;
+                    }
+                    System.out.print("." + fractionalPartOut.toString());
+                }
+                System.out.println();
+            }
+        } else {
+            System.out.println("error");
+        }
+    }
+}
